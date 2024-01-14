@@ -1,6 +1,6 @@
 import { DebouncedFunction, IResponse, NoteResponseType } from "./dataTypes";
 
-const url: string = "http://127.0.0.1:5000/api/v1/";
+const url: string = "https://flaskproject-note.onrender.com/api/v1/";
 
 export async function getFetchData<T>(path: string): Promise<T> {
   try {
