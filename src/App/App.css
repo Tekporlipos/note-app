@@ -1,0 +1,7 @@
+.dropdown:hover .dropdown-content{
+    display: block;
+}
+
+.dropdown-container:hover .dropdown-content {
+    display: block;
+}
