@@ -24,7 +24,7 @@ function CardComponent(prop: { data: NoteResponseType; action: Function }) {
   }
 
   return (
-    <div className="bg-white rounded-lg py-5">
+    <div className="bg-white rounded-lg py-5 flex flex-col justify-between">
       <div className=" border-l-4 px-5 py-1 border-gray-600 flex flex-col">
         <div className="font-bold text-lg line-clamp-1 capitalize">
           {prop.data.title}
@@ -58,8 +58,8 @@ function CardComponent(prop: { data: NoteResponseType; action: Function }) {
               <path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z" />
             </svg>
           )}
-          <div className="font-light text-sm flex items-center">
-            Updated at: {formatDate(prop.data.updated_at)} <svg width="32" height="32" viewBox="0 0 24 24"><title>circle-small</title><path d="M12,10A2,2 0 0,0 10,12C10,13.11 10.9,14 12,14C13.11,14 14,13.11 14,12A2,2 0 0,0 12,10Z" /></svg> {timeAgo(new Date(prop.data.updated_at))}
+          <div className="font-light text-xs flex items-center">
+            Updated: {formatDate(prop.data.updated_at)} <svg width="32" height="32" viewBox="0 0 24 24"><title>circle-small</title><path d="M12,10A2,2 0 0,0 10,12C10,13.11 10.9,14 12,14C13.11,14 14,13.11 14,12A2,2 0 0,0 12,10Z" /></svg> {timeAgo(new Date(prop.data.updated_at))}
           </div>
         </div>
         <div className="me-6 relative dropdown">
