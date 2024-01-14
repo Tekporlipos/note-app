@@ -1,97 +1,118 @@
-import {DebouncedFunction, IResponse} from "./dataTypes";
+import { DebouncedFunction, IResponse, NoteResponseType } from "./dataTypes";
 
-const url:string = "http://127.0.0.1:5000/api/v1/";
+const url: string = "http://127.0.0.1:5000/api/v1/";
 
-export async function getFetchData<T>(path:string): Promise<T> {
-    try {
-        const response:Response = await fetch(`${url}${path}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data:IResponse = await response.json() as IResponse;
-        return data as T;
-    } catch (error) {
-        throw error;
+export async function getFetchData<T>(path: string): Promise<T> {
+  try {
+    const response: Response = await fetch(`${url}${path}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    const data: IResponse = (await response.json()) as IResponse;
+    return data as T;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function postFetchData<T, U>(path: string, data: U): Promise<T> {
-    try {
-        const response: Response = await fetch(`${url}${path}`, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const responseData: IResponse = await response.json() as IResponse;
-        return responseData as T;
-    } catch (error) {
-        throw error;
+  try {
+    const response: Response = await fetch(`${url}${path}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    const responseData: IResponse = (await response.json()) as IResponse;
+    return responseData as T;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function patchFetchData<T, U>(path: string, data: U): Promise<T> {
-    try {
-        const response: Response = await fetch(`${url}${path}`, {
-            method: "PATCH",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const responseData: IResponse = await response.json() as IResponse;
-        return responseData as T;
-    } catch (error) {
-        throw error;
+  try {
+    const response: Response = await fetch(`${url}${path}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    const responseData: IResponse = (await response.json()) as IResponse;
+    return responseData as T;
+  } catch (error) {
+    throw error;
+  }
 }
 export async function deleteFetchData<T>(path: string): Promise<T> {
-    try {
-        const response: Response = await fetch(`${url}${path}`, {
-            method: "DELETE",
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const responseData: IResponse = await response.json() as IResponse;
-        return responseData as T;
-    } catch (error) {
-        throw error;
+  try {
+    const response: Response = await fetch(`${url}${path}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    const responseData: IResponse = (await response.json()) as IResponse;
+    return responseData as T;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export function formatDate(inputDate: string): string {
-    const dateObject = new Date(inputDate);
-    const options: Intl.DateTimeFormatOptions = {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    };
-    return dateObject.toLocaleDateString('en-US', options);
+  const dateObject = new Date(inputDate);
+  const options: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  };
+  return dateObject.toLocaleDateString("en-US", options);
 }
 
+export function debounce<F extends (...args: any[]) => any>(
+  func: F,
+  delay: number,
+): DebouncedFunction<F> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-export function debounce<F extends (...args: any[]) => any>(func: F, delay: number): DebouncedFunction<F> {
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  return function debounced(...args: Parameters<F>): void {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
 
-    return function debounced(...args: Parameters<F>): void {
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-        }
+    timeoutId = setTimeout(() => {
+      func(...args);
+      timeoutId = undefined;
+    }, delay);
+  };
+}
 
-        timeoutId = setTimeout(() => {
-            func(...args);
-            timeoutId = undefined;
-        }, delay);
-    };
+export function filterData(
+  notes: NoteResponseType[] | undefined,
+  index: number,
+) {
+  if (notes) {
+    const navs = ["view", "edit", "important"];
+    return notes.filter((value: NoteResponseType) => {
+      if (index === 0) {
+        return true;
+      } else if (index > 0) {
+        let item: string = localStorage.getItem(navs[index - 1]) ?? "[]";
+        let parse: Array<string> = JSON.parse(item);
+        return parse.includes(value.id);
+      }
+    });
+  }
+  return [];
 }
