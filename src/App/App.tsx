@@ -20,11 +20,13 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SkeletonLoader from "./component/shared/SkeletonLoader";
+import EmptyStageComponent from "./component/shared/EmptyStageComponent";
 
 function App() {
   const [showInputView, setShowInputView] = useState(false);
   const [state, setState] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<request>({ body: "", title: "", id: null });
   const [notes, setNotes] = useState<IResponseData>({} as IResponseData);
   const [index, setIndex] = useState(0);
@@ -43,13 +45,16 @@ function App() {
   }, []);
 
   function getData(message: string | null = null) {
+    setLoading(true)
     getFetchData<IResponse>(`note`)
       .then((value) => {
         setNotes(value.data);
         showToast(message ?? value.message, false);
+        setLoading(false)
       })
       .catch((error) => {
         showToast(error.message);
+        setLoading(false)
       });
   }
 
@@ -160,8 +165,9 @@ function App() {
   return (
     <div className="my-5 md:container">
       <NavComponent setIndex={setIndex} index={index} addNote={addNote} />
+      {!loading && filterData(notes?.notes, index).length===0?<EmptyStageComponent/>:null}
       <div className="mx-3 md:mx-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 my-5 gap-5">
-        {filterData(notes?.notes, index).length<1? [1,2,3,4,5,6,7,8,9,10,11,12].map(value => <SkeletonLoader key={value}/>):null}
+        {loading && !notes?.notes ? [1,2,3,4,5,6,7,8,9,10,11,12].map(value => <SkeletonLoader key={value}/>):null}
         {filterData(notes?.notes, index).map((value: NoteResponseType) => (
           <CardComponent action={action} data={value} key={value.id} />
         ))}

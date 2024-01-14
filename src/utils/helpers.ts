@@ -116,3 +116,34 @@ export function filterData(
   }
   return [];
 }
+
+export function timeAgo(date: Date): string {
+  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+
+  const interval = Math.floor(seconds / 31536000);
+  if (interval >= 1) {
+    return `${interval} year${interval === 1 ? '' : 's'} ago`;
+  }
+
+  const months = Math.floor(seconds / 2592000);
+  if (months >= 1) {
+    return `${months} month${months === 1 ? '' : 's'} ago`;
+  }
+
+  const days = Math.floor(seconds / 86400);
+  if (days >= 1) {
+    return `${days} day${days === 1 ? '' : 's'} ago`;
+  }
+
+  const hours = Math.floor(seconds / 3600);
+  if (hours >= 1) {
+    return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+  }
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes >= 1) {
+    return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+  }
+
+  return `${seconds} second${seconds === 1 ? '' : 's'} ago`;
+}
