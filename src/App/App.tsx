@@ -17,8 +17,8 @@ import {
   patchFetchData,
   postFetchData,
 } from "../utils/helpers";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [showInputView, setShowInputView] = useState(false);
@@ -32,22 +32,24 @@ function App() {
     getData();
   }, []);
 
-  useEffect(()=>{
-    setInterval(()=>{
-      getData("Notes refreshed successfully");
-    },5*60*1000)
-  },[])
+  useEffect(() => {
+    setInterval(
+      () => {
+        getData("Notes refreshed successfully");
+      },
+      5 * 60 * 1000,
+    );
+  }, []);
 
-
-  function getData(message:string|null=null) {
+  function getData(message: string | null = null) {
     getFetchData<IResponse>(`note`)
-        .then((value) => {
-          setNotes(value.data);
-          showToast(message??value.message,false)
-        })
-        .catch((error) => {
-          showToast(error.message)
-        });
+      .then((value) => {
+        setNotes(value.data);
+        showToast(message ?? value.message, false);
+      })
+      .catch((error) => {
+        showToast(error.message);
+      });
   }
 
   function addNote() {
@@ -95,8 +97,8 @@ function App() {
 
   function postData(action: boolean, type: null = null) {
     if (action) {
-      patchFetchData<any, request>(("note/" + data.id) as string, data).then(
-        (value) => {
+      patchFetchData<any, request>(("note/" + data.id) as string, data)
+        .then((value) => {
           const newNotes: NoteResponseType[] = notes.notes.map((value1) => {
             if (value1.id === value.data.id) {
               return { ...value1, body: data.body };
@@ -106,21 +108,23 @@ function App() {
           setNotes((prevState) => {
             return { ...prevState, notes: newNotes };
           });
-          showToast(value.message,false)
-        },
-      ).catch((error) => {
-        showToast(error.message)
-      });
-    } else {
-      postFetchData<any, request>("note", data).then((value) => {
-        const newNotes: NoteResponseType[] = [value.data, ...notes.notes];
-        setNotes((prevState) => {
-          return { ...prevState, notes: newNotes };
+          showToast(value.message, false);
+        })
+        .catch((error) => {
+          showToast(error.message);
         });
-        showToast(value.message,false)
-      }).catch((error) => {
-        showToast(error.message)
-      });
+    } else {
+      postFetchData<any, request>("note", data)
+        .then((value) => {
+          const newNotes: NoteResponseType[] = [value.data, ...notes.notes];
+          setNotes((prevState) => {
+            return { ...prevState, notes: newNotes };
+          });
+          showToast(value.message, false);
+        })
+        .catch((error) => {
+          showToast(error.message);
+        });
     }
     if (!type) {
       setShowInputView(false);
@@ -128,28 +132,29 @@ function App() {
   }
 
   function deletePost() {
-    deleteFetchData(("note/" + data.id) as string).then((value:any) => {
-      const newNotes: NoteResponseType[] = notes.notes.filter(
-        (value1) => value1.id !== data.id,
-      );
-      setNotes((prevState) => {
-        return { ...prevState, notes: newNotes };
+    deleteFetchData(("note/" + data.id) as string)
+      .then((value: any) => {
+        const newNotes: NoteResponseType[] = notes.notes.filter(
+          (value1) => value1.id !== data.id,
+        );
+        setNotes((prevState) => {
+          return { ...prevState, notes: newNotes };
+        });
+        showToast(value.message, false);
+      })
+      .catch((error) => {
+        showToast(error.message);
       });
-      showToast(value.message,false)
-    }).catch((error) => {
-      showToast(error.message)
-    });
     setShowModal(false);
   }
 
-  function showToast(message:string, type:boolean=true){
-    if (type){
+  function showToast(message: string, type: boolean = true) {
+    if (type) {
       toast.error(message);
-    }else {
+    } else {
       toast.success(message);
     }
-  };
-
+  }
 
   return (
     <div className="my-5 md:container">
@@ -177,16 +182,16 @@ function App() {
         />
       ) : null}
       <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
       />
     </div>
   );
