@@ -8,6 +8,7 @@ export type NoteResponseType = {
 
 export interface IResponse {
   data: IResponseData;
+  message: string;
 }
 
 export interface IResponseData {

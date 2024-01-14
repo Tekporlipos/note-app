@@ -17,6 +17,8 @@ import {
   patchFetchData,
   postFetchData,
 } from "../utils/helpers";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [showInputView, setShowInputView] = useState(false);
@@ -24,16 +26,29 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState<request>({ body: "", title: "", id: null });
   const [notes, setNotes] = useState<IResponseData>({} as IResponseData);
-
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    getFetchData<IResponse>("note?page=1&page_size=20")
-      .then((value) => {
-        setNotes(value.data);
-      })
-      .catch((error) => {});
+    getData();
   }, []);
+
+  useEffect(()=>{
+    setInterval(()=>{
+      getData("Notes refreshed successfully");
+    },5*60*1000)
+  },[])
+
+
+  function getData(message:string|null=null) {
+    getFetchData<IResponse>(`note`)
+        .then((value) => {
+          setNotes(value.data);
+          showToast(message??value.message,false)
+        })
+        .catch((error) => {
+          showToast(error.message)
+        });
+  }
 
   function addNote() {
     setData({ body: "", title: "", id: null });
@@ -91,14 +106,20 @@ function App() {
           setNotes((prevState) => {
             return { ...prevState, notes: newNotes };
           });
+          showToast(value.message,false)
         },
-      );
+      ).catch((error) => {
+        showToast(error.message)
+      });
     } else {
       postFetchData<any, request>("note", data).then((value) => {
         const newNotes: NoteResponseType[] = [value.data, ...notes.notes];
         setNotes((prevState) => {
           return { ...prevState, notes: newNotes };
         });
+        showToast(value.message,false)
+      }).catch((error) => {
+        showToast(error.message)
       });
     }
     if (!type) {
@@ -107,21 +128,33 @@ function App() {
   }
 
   function deletePost() {
-    deleteFetchData(("note/" + data.id) as string).then((value) => {
+    deleteFetchData(("note/" + data.id) as string).then((value:any) => {
       const newNotes: NoteResponseType[] = notes.notes.filter(
         (value1) => value1.id !== data.id,
       );
       setNotes((prevState) => {
         return { ...prevState, notes: newNotes };
       });
+      showToast(value.message,false)
+    }).catch((error) => {
+      showToast(error.message)
     });
     setShowModal(false);
   }
 
+  function showToast(message:string, type:boolean=true){
+    if (type){
+      toast.error(message);
+    }else {
+      toast.success(message);
+    }
+  };
+
+
   return (
-    <div className="container">
+    <div className="my-5 md:container">
       <NavComponent setIndex={setIndex} index={index} addNote={addNote} />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 my-5 gap-5">
+      <div className="mx-3 md:mx-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 my-5 gap-5">
         {filterData(notes?.notes, index).map((value: NoteResponseType) => (
           <CardComponent action={action} data={value} key={value.id} />
         ))}
@@ -143,6 +176,18 @@ function App() {
           setInputShow={setShowModal}
         />
       ) : null}
+      <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+      />
     </div>
   );
 }
