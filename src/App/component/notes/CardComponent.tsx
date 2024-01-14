@@ -31,7 +31,7 @@ function CardComponent(prop: { data: NoteResponseType; action: Function }) {
         </div>
         <div className="font-light">{formatDate(prop.data.created_at)}</div>
       </div>
-      <div className="mt-5 mx-6 font-light line-clamp-6">{prop.data.body}</div>
+      <div className="mt-5 mx-6 font-light whitespace-normal line-clamp-6">{prop.data.body}</div>
 
       <div className="flex justify-between items-center mt-5 ">
         <div className="ms-6 font-light flex">

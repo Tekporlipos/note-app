@@ -55,11 +55,11 @@ function ContentModalComponent(props: {
                     {props.data.title}
                   </h3>
                   <div className="mt-2">
-                    <p className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-500 whitespace-break-spaces">
                       {props.state
                         ? "Are you sure you want to delete this Note? It will be permanently removed. This action cannot be undone."
                         : props.data.body}
-                    </p>
+                    </div>
                   </div>
                 </div>
               </div>
