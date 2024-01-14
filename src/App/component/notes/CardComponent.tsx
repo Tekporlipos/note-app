@@ -59,7 +59,7 @@ function CardComponent(prop: { data: NoteResponseType; action: Function }) {
             </svg>
           )}
           <div className="font-light text-xs flex items-center">
-            Updated: {formatDate(prop.data.updated_at)} <svg width="32" height="32" viewBox="0 0 24 24"><title>circle-small</title><path d="M12,10A2,2 0 0,0 10,12C10,13.11 10.9,14 12,14C13.11,14 14,13.11 14,12A2,2 0 0,0 12,10Z" /></svg> {timeAgo(new Date(prop.data.updated_at))}
+            Updated:  {timeAgo(new Date(prop.data.updated_at))}
           </div>
         </div>
         <div className="me-6 relative dropdown">
