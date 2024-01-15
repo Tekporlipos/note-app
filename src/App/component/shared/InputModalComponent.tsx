@@ -13,7 +13,7 @@ function InputModalComponent(props: {
     if (props.state) {
       props.postData(props.state, "edit");
     }
-  }, 700);
+  }, 5*1000);
 
   return (
     <div
